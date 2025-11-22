@@ -66,11 +66,7 @@ def main():
 
         st.subheader("AI Provider")
         st.info("🤖 GPT-5 사용")
-        api_key = st.text_input(
-            "SSAFY GMS API Key",
-            type="password",
-            help="SSAFY GMS API 키를 입력하세요 (https://gms.ssafy.io/)"
-        )
+        
 
         st.divider()
 

@@ -1,6 +1,5 @@
 """
 AI-powered Infrastructure as Code generator
-SSAFY GMS GPT-5 전용
 """
 import os
 from typing import Dict, List
@@ -13,7 +12,7 @@ class AICodeGenerator:
         self.openai_client = None
 
         if os.getenv("OPENAI_API_KEY"):
-            # SSAFY GMS GPT-5 API
+            # GMS GPT-5 API
             self.openai_client = OpenAI(
                 api_key=os.getenv("OPENAI_API_KEY"),
                 base_url="https://gms.ssafy.io/gmsapi/api.openai.com/v1"
@@ -22,9 +21,9 @@ class AICodeGenerator:
     def generate_terraform_code(
         self,
         canvas_state: CanvasState,
-        provider: str = "openai"  # SSAFY GMS만 사용
+        provider: str = "openai"  # GMS만 사용
     ) -> CodeGenerationResponse:
-        """Generate Terraform code from canvas state using SSAFY GMS GPT-5"""
+        """Generate Terraform code from canvas state using GMS GPT-5"""
 
         # Build the prompt
         prompt = self._build_terraform_prompt(canvas_state)
@@ -35,13 +34,13 @@ class AICodeGenerator:
             else:
                 return CodeGenerationResponse(
                     success=False,
-                    error="SSAFY GMS API key not configured. Please set OPENAI_API_KEY in .env file."
+                    error=" GMS API key not configured. Please set OPENAI_API_KEY in .env file."
                 )
 
             return CodeGenerationResponse(
                 success=True,
                 code=code,
-                estimated_cost="SSAFY GMS 사용 (무료)"
+                estimated_cost=" GMS 사용 (무료)"
             )
 
         except Exception as e:
@@ -97,7 +96,7 @@ DO NOT include explanations outside of code comments. Start directly with the co
         return prompt
 
     def _generate_with_gpt(self, prompt: str) -> str:
-        """Generate code using GPT-5 (SSAFY GMS)"""
+        """Generate code using GPT-5 ( GMS)"""
         response = self.openai_client.chat.completions.create(
             model="gpt-5",
             messages=[
