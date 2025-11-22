@@ -65,11 +65,11 @@ def main():
         st.divider()
 
         st.subheader("AI Provider")
-        ai_provider = st.radio("Choose AI Provider", ["SSAFY GMS (GPT-5)", "Anthropic (Claude)"])
+        st.info("🤖 GPT-5 사용")
         api_key = st.text_input(
-            "API Key",
+            "SSAFY GMS API Key",
             type="password",
-            help="Enter your SSAFY GMS API key or Anthropic API key"
+            help="SSAFY GMS API 키를 입력하세요 (https://gms.ssafy.io/)"
         )
 
         st.divider()
@@ -232,7 +232,7 @@ def main():
                 target_format = st.radio("Output Format", ["Terraform", "CloudFormation"])
 
             with col_gen2:
-                provider = "openai" if "GPT-5" in ai_provider else "anthropic"
+                provider = "openai"  
 
             if st.button("✨ Generate Infrastructure Code", type="primary"):
                 if not api_key:
