@@ -1,20 +1,16 @@
 """
 AI-powered Infrastructure as Code generator
+SSAFY GMS GPT-5 전용
 """
 import os
 from typing import Dict, List
-from anthropic import Anthropic
 from openai import OpenAI
 from models import CanvasState, AWSResource, Connection, CodeGenerationResponse
 
 
 class AICodeGenerator:
     def __init__(self):
-        self.anthropic_client = None
         self.openai_client = None
-
-        if os.getenv("ANTHROPIC_API_KEY"):
-            self.anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
         if os.getenv("OPENAI_API_KEY"):
             # SSAFY GMS GPT-5 API
@@ -26,28 +22,26 @@ class AICodeGenerator:
     def generate_terraform_code(
         self,
         canvas_state: CanvasState,
-        provider: str = "anthropic"
+        provider: str = "openai"  # SSAFY GMS만 사용
     ) -> CodeGenerationResponse:
-        """Generate Terraform code from canvas state"""
+        """Generate Terraform code from canvas state using SSAFY GMS GPT-5"""
 
         # Build the prompt
         prompt = self._build_terraform_prompt(canvas_state)
 
         try:
-            if provider == "anthropic" and self.anthropic_client:
-                code = self._generate_with_claude(prompt)
-            elif provider == "openai" and self.openai_client:
+            if self.openai_client:
                 code = self._generate_with_gpt(prompt)
             else:
                 return CodeGenerationResponse(
                     success=False,
-                    error="No AI provider configured"
+                    error="SSAFY GMS API key not configured. Please set OPENAI_API_KEY in .env file."
                 )
 
             return CodeGenerationResponse(
                 success=True,
                 code=code,
-                estimated_cost="$50-100/month (estimated)"
+                estimated_cost="SSAFY GMS 사용 (무료)"
             )
 
         except Exception as e:
@@ -101,17 +95,6 @@ Provide ONLY the Terraform code with proper structure:
 DO NOT include explanations outside of code comments. Start directly with the code.
 """
         return prompt
-
-    def _generate_with_claude(self, prompt: str) -> str:
-        """Generate code using Claude"""
-        message = self.anthropic_client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4096,
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return message.content[0].text
 
     def _generate_with_gpt(self, prompt: str) -> str:
         """Generate code using GPT-5 (SSAFY GMS)"""
