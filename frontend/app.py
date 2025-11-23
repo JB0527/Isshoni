@@ -39,7 +39,28 @@ if "generated_code" not in st.session_state:
     st.session_state.generated_code = ""
 
 if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = []
+    st.session_state.chat_messages = [
+        {
+            "username": "Dev A",
+            "message": "普段はユーザーが10人しかいないけど、災害のときは10万人に通知を送ることになるから、1〜2分の間に一気にアクセスが集中するよね。",
+            "timestamp": "preset"
+        },
+        {
+            "username": "Dev B",
+            "message": "そうだね。開封率を30%としたら3万人、その半分が1分以内にアクセスするとしても、ピーク時は1万5千人ぐらい同時接続になるね。",
+            "timestamp": "preset"
+        },
+        {
+            "username": "Dev A",
+            "message": "そうなると、サーバー1台じゃ厳しいし、ALB（ロードバランサー）とオートスケーリングは必須だな。",
+            "timestamp": "preset"
+        },
+        {
+            "username": "Dev B",
+            "message": "了解！その構成でインフラ設計しよう！",
+            "timestamp": "preset"
+        },
+    ]
 
 
 def main():
