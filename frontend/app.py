@@ -6,6 +6,7 @@ import requests
 import json
 from datetime import datetime
 import uuid
+import os
 
 # Page configuration
 st.set_page_config(
@@ -15,8 +16,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Backend API URL
-BACKEND_URL = "http://localhost:8000"
+# Backend API URL - Docker 환경에서는 서비스 이름 사용
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:8000")
 
 # Initialize session state
 if "session_id" not in st.session_state:
@@ -67,9 +68,9 @@ def main():
         st.subheader("AI Provider")
         st.info("🤖 GPT-5 사용")
         api_key = st.text_input(
-            "SSAFY GMS API Key",
+            "AI API Key",
             type="password",
-            help="SSAFY GMS API 키를 입력하세요 (https://gms.ssafy.io/)"
+            help="AI API 키를 입력하세요"
         )
 
         st.divider()
@@ -267,21 +268,32 @@ def main():
                                     "target_format": target_format.lower(),
                                     "ai_provider": provider
                                 },
-                                timeout=120
+                                timeout=720  # 12분 (GMS API가 느릴 수 있음)
                             )
+
+                            st.write(f"🔍 Debug - Response status: {response.status_code}")
 
                             if response.status_code == 200:
                                 result = response.json()
+                                st.write(f"🔍 Debug - Result keys: {result.keys()}")
+                                st.write(f"🔍 Debug - Success: {result.get('success')}")
+
                                 if result["success"]:
-                                    st.session_state.generated_code = result["code"]
-                                    st.success("✅ Code generated successfully!")
+                                    code_content = result.get("code", "")
+                                    st.write(f"🔍 Debug - Code length: {len(code_content)}")
+                                    st.session_state.generated_code = code_content
+                                    st.success("✅ 코드 생성 완료!")
+                                    st.rerun()  # 페이지 새로고침하여 코드 표시
                                 else:
-                                    st.error(f"Generation failed: {result['error']}")
+                                    st.error(f"생성 실패: {result.get('error', 'Unknown error')}")
                             else:
-                                st.error(f"API error: {response.status_code}")
+                                st.error(f"API 오류: {response.status_code}")
+                                st.write(f"Response: {response.text}")
 
                         except Exception as e:
-                            st.error(f"Error: {str(e)}")
+                            st.error(f"오류: {str(e)}")
+                            import traceback
+                            st.code(traceback.format_exc())
 
             # Display generated code
             if st.session_state.generated_code:

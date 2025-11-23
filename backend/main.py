@@ -114,18 +114,24 @@ async def send_chat_message(session_id: str, message: ChatMessage):
 @app.post("/api/generate-code", response_model=CodeGenerationResponse)
 async def generate_code(request: CodeGenerationRequest):
     """Generate Terraform/CloudFormation code from canvas state"""
+    import logging
+    logger = logging.getLogger(__name__)
+
     try:
         if request.target_format == "terraform":
             result = ai_generator.generate_terraform_code(
                 request.canvas_state,
                 provider=request.ai_provider
             )
+            logger.info(f"📤 응답 전송 - success: {result.success}, code length: {len(result.code) if result.code else 0}")
             return result
         else:
             result = ai_generator.generate_cloudformation_code(request.canvas_state)
+            logger.info(f"📤 응답 전송 - success: {result.success}, code length: {len(result.code) if result.code else 0}")
             return result
 
     except Exception as e:
+        logger.error(f"❌ Exception in generate_code: {str(e)}")
         return CodeGenerationResponse(
             success=False,
             error=f"Code generation failed: {str(e)}"
